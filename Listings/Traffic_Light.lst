@@ -1,0 +1,463 @@
+A51 MACRO ASSEMBLER  TRAFFIC_LIGHT                                                        06/28/2021 21:26:08 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\Traffic_Light.obj
+ASSEMBLER INVOKED BY: D:\KEILC V5 Full ARM   8051\8051\C51\BIN\A51.EXE Traffic_Light.a51 SET(SMALL) DEBUG PRINT(.\Listin
+                      gs\Traffic_Light.lst) OBJECT(.\Objects\Traffic_Light.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ; P3.4 IS USED FOR START/PASE BUTTON -0 IS WORKING AND 1 IS PAUSING-
+                       2     ; P3.5 IS USED FOR SETUP BUTTON
+  REG                  3     PRESS   EQU             R0 
+  REG                  4     SAVE    EQU             R1
+  REG                  5     COUNT   EQU             R2
+  REG                  6     COUNT1  EQU     R3 
+  REG                  7     COUNT2  EQU     R4 
+  0016                 8     GREEN   EQU     16H 
+  0017                 9     YELLOW  EQU     17H 
+  0018                10     RED     EQU     18H 
+  0090                11     LIGHT   EQU     P1 
+  00A0                12     LED     EQU     P2 
+  00B0                13     SCAN    EQU     P3 
+                      14     
+0000                  15     ORG 0
+0000 8011             16     JMP MAIN
+                      17     
+000B                  18     ORG    0BH 
+000B 758C3C           19     MOV    TH0,#HIGH(-50000) 
+000E 758AB0           20     MOV    TL0,#LOW(-50000) 
+0011 0A               21     INC    COUNT     
+0012 32               22     RETI       
+                      23     
+0013                  24             MAIN:
+0013 7800             25             MOV PRESS, #0
+0015 30B502           26             JNB P3.5, START_KEYPAD
+0018 80F9             27             JMP MAIN
+                      28             
+                      29             ; START KEYPAD
+001A                  30             START_KEYPAD:
+001A D280             31                     SETB P0.0
+001C C283             32                     CLR P0.3
+001E 208619           33                     JB P0.6, NEXT1
+0021 120225           34                     LCALL DELAY
+0024 08               35                     INC PRESS
+0025 B80104           36                     CJNE PRESS, #1, C1
+0028 7901             37                     MOV SAVE, #1
+002A 800E             38                     JMP NEXT1
+002C                  39                     C1:
+002C B80208           40                             CJNE PRESS, #2, D1
+002F E9               41                             MOV A, SAVE
+0030 75F00A           42                             MOV B, #10
+0033 A4               43                             MUL AB
+0034 2401             44                             ADD A, #1
+0036 F9               45                             MOV SAVE, A
+0037 02003A           46                             D1: LJMP NEXT1
+003A                  47             NEXT1:
+003A 208519           48                     JB P0.5, NEXT2
+003D 120225           49                     LCALL DELAY
+0040 08               50                     INC PRESS
+0041 B80104           51                     CJNE PRESS, #1, C2
+0044 7902             52                     MOV SAVE, #2
+0046 800E             53                     JMP NEXT2
+0048                  54                     C2:
+0048 B80208           55                             CJNE PRESS, #2, D2
+004B E9               56                             MOV A, SAVE
+004C 75F00A           57                             MOV B, #10
+A51 MACRO ASSEMBLER  TRAFFIC_LIGHT                                                        06/28/2021 21:26:08 PAGE     2
+
+004F A4               58                             MUL AB
+0050 2402             59                             ADD A, #2
+0052 F9               60                             MOV SAVE, A
+0053 020056           61                             D2: LJMP NEXT2
+0056                  62             NEXT2:
+0056 208419           63                     JB P0.4, NEXT3
+0059 120225           64                     LCALL DELAY
+005C 08               65                     INC PRESS
+005D B80104           66                     CJNE PRESS, #1, C3
+0060 7903             67                     MOV SAVE, #3
+0062 800E             68                     JMP NEXT3
+0064                  69                     C3:
+0064 B80208           70                             CJNE PRESS, #2, D3
+0067 E9               71                             MOV A, SAVE
+0068 75F00A           72                             MOV B, #10
+006B A4               73                             MUL AB
+006C 2403             74                             ADD A, #3
+006E F9               75                             MOV SAVE, A
+006F 020072           76                             D3: LJMP NEXT3
+0072                  77             NEXT3:
+0072 D283             78                     SETB P0.3
+0074 C282             79                     CLR P0.2
+0076 208619           80                     JB P0.6, NEXT4
+0079 120225           81                     LCALL DELAY
+007C 08               82                     INC PRESS
+007D B80104           83                     CJNE PRESS, #1, C4
+0080 7904             84                     MOV SAVE, #4
+0082 800E             85                     JMP NEXT4
+0084                  86                     C4:
+0084 B80208           87                             CJNE PRESS, #2, D4
+0087 E9               88                             MOV A, SAVE
+0088 75F00A           89                             MOV B, #10
+008B A4               90                             MUL AB
+008C 2404             91                             ADD A, #4
+008E F9               92                             MOV SAVE, A
+008F 020092           93                             D4: LJMP NEXT4
+0092                  94             NEXT4:
+0092 208519           95                     JB P0.5, NEXT5
+0095 120225           96                     LCALL DELAY
+0098 08               97                     INC PRESS
+0099 B80104           98                     CJNE PRESS, #1, C5
+009C 7905             99                     MOV SAVE, #5
+009E 800E            100                     JMP NEXT5
+00A0                 101                     C5:
+00A0 B80208          102                             CJNE PRESS, #2, D5
+00A3 E9              103                             MOV A, SAVE
+00A4 75F00A          104                             MOV B, #10
+00A7 A4              105                             MUL AB
+00A8 2405            106                             ADD A, #5
+00AA F9              107                             MOV SAVE, A
+00AB 0200AE          108                             D5: LJMP NEXT5
+00AE                 109             NEXT5:
+00AE 208419          110                     JB P0.4, NEXT6
+00B1 120225          111                     LCALL DELAY
+00B4 08              112                     INC PRESS
+00B5 B80104          113                     CJNE PRESS, #1, C6
+00B8 7906            114                     MOV SAVE, #6
+00BA 800E            115                     JMP NEXT6
+00BC                 116                     C6:
+00BC B80208          117                             CJNE PRESS, #2, D6
+00BF E9              118                             MOV A, SAVE
+00C0 75F00A          119                             MOV B, #10
+00C3 A4              120                             MUL AB
+00C4 2406            121                             ADD A, #6
+00C6 F9              122                             MOV SAVE, A
+00C7 0200CA          123                             D6: LJMP NEXT6
+A51 MACRO ASSEMBLER  TRAFFIC_LIGHT                                                        06/28/2021 21:26:08 PAGE     3
+
+00CA                 124             NEXT6:
+00CA D282            125                     SETB P0.2
+00CC C281            126                     CLR P0.1
+00CE 208619          127                     JB P0.6, NEXT7
+00D1 120225          128                     LCALL DELAY
+00D4 08              129                     INC PRESS
+00D5 B80104          130                     CJNE PRESS, #1, C7
+00D8 7907            131                     MOV SAVE, #7
+00DA 800E            132                     JMP NEXT7
+00DC                 133                     C7:
+00DC B80208          134                             CJNE PRESS, #2, D7
+00DF E9              135                             MOV A, SAVE
+00E0 75F00A          136                             MOV B, #10
+00E3 A4              137                             MUL AB
+00E4 2407            138                             ADD A, #7
+00E6 F9              139                             MOV SAVE, A
+00E7 0200EA          140                             D7: LJMP NEXT7
+00EA                 141             NEXT7:
+00EA 208519          142                     JB P0.5, NEXT8
+00ED 120225          143                     LCALL DELAY
+00F0 08              144                     INC PRESS
+00F1 B80104          145                     CJNE PRESS, #1, C8
+00F4 7908            146                     MOV SAVE, #8
+00F6 800E            147                     JMP NEXT8
+00F8                 148                     C8:
+00F8 B80208          149                             CJNE PRESS, #2, D8
+00FB E9              150                             MOV A, SAVE
+00FC 75F00A          151                             MOV B, #10
+00FF A4              152                             MUL AB
+0100 2408            153                             ADD A, #8
+0102 F9              154                             MOV SAVE, A
+0103 020106          155                             D8: LJMP NEXT8
+0106                 156             NEXT8:
+0106 208419          157                     JB P0.4, NEXT9
+0109 120225          158                     LCALL DELAY
+010C 08              159                     INC PRESS
+010D B80104          160                     CJNE PRESS, #1, C9
+0110 7909            161                     MOV SAVE, #9
+0112 800E            162                     JMP NEXT9
+0114                 163                     C9:
+0114 B80208          164                             CJNE PRESS, #2, D9
+0117 E9              165                             MOV A, SAVE
+0118 75F00A          166                             MOV B, #10
+011B A4              167                             MUL AB
+011C 2409            168                             ADD A, #9
+011E F9              169                             MOV SAVE, A
+011F 020122          170                             D9: LJMP NEXT9
+0122                 171             NEXT9:
+0122 D281            172                     SETB P0.1
+0124 C280            173                     CLR P0.0
+0126 208600          174                     JB P0.6, NEXT10
+                     175                     ;MOV A, #10
+                     176                     ;MOV SAVE, A
+0129                 177             NEXT10:
+0129 208519          178                     JB P0.5, NEXT11
+012C 120225          179                     LCALL DELAY
+012F 08              180                     INC PRESS
+0130 B80104          181                     CJNE PRESS, #1, C11
+0133 7900            182                     MOV SAVE, #0
+0135 800E            183                     JMP NEXT11
+0137                 184                     C11:
+0137 B80208          185                             CJNE PRESS, #2, D11
+013A E9              186                             MOV A, SAVE
+013B 75F00A          187                             MOV B, #10
+013E A4              188                             MUL AB
+013F 2400            189                             ADD A, #0
+A51 MACRO ASSEMBLER  TRAFFIC_LIGHT                                                        06/28/2021 21:26:08 PAGE     4
+
+0141 F9              190                             MOV SAVE, A
+0142 020145          191                             D11: LJMP NEXT11
+0145                 192             NEXT11:
+0145 208402          193                     JB P0.4, D12
+0148 8003            194                     JMP CHECK_START_BUTTON
+014A 02001A          195                     D12: LJMP START_KEYPAD
+014D                 196             CHECK_START_BUTTON: 
+014D 30B402          197                     JNB P3.4, SETUP_LIGHT
+0150 80FB            198                     JMP CHECK_START_BUTTON
+                     199                     
+0152                 200             SETUP_LIGHT:
+0152 758901          201                     MOV    TMOD,#01 
+0155 758C3C          202                     MOV    TH0,#HIGH(-50000) 
+0158 758AB0          203                     MOV    TL0,#LOW(-50000) 
+015B C28D            204                     CLR    TF0 
+015D D28C            205                     SETB   TR0 
+015F 75A882          206                     MOV    IE,#82H
+0162                 207             START_LIGHT:
+                     208                     ;JNB    P3.5, START_KEYPAD
+0162 120234          209                     LCALL   PAUSING
+0165 75900C          210                     MOV    LIGHT,#00001100B ; sang dèn xanh 1, do 2 
+                     211     
+0168 8918            212                     MOV    RED, SAVE
+016A 751703          213                     MOV    YELLOW,#3
+016D 78FD            214                     MOV        R0, #-3
+016F E9              215                     MOV        A, SAVE
+0170 28              216                     ADD    A, R0; A = A - YELLOW
+0171 F516            217                     MOV    GREEN, A
+                     218                     
+                     219                     ;MOV    GREEN,#17 
+                     220                     ;MOV    YELLOW,#3 
+                     221                     ;MOV    RED,#20
+                     222                      
+0173 AB16            223                     MOV    COUNT1,GREEN 
+0175 AC18            224                     MOV    COUNT2,RED
+                     225                     
+0177                 226             H1: 
+0177 7A00            227                     MOV    COUNT,#0 
+0179 1201D6          228                     LCALL  BCD_HEX 
+017C                 229             LB1:
+017C 120234          230                     LCALL   PAUSING
+017F 1201EB          231                     LCALL   SHOW_LED 
+0182 BA14F7          232                     CJNE    COUNT,#20,LB1 
+0185 1B              233                     DEC     COUNT1 
+0186 1C              234                     DEC     COUNT2 
+0187 BB00ED          235                     CJNE    COUNT1,#0,H1 
+                     236      
+018A 75900A          237                     MOV    LIGHT,#00001010B  ; sang dèn vang 1, do 2  
+018D AB17            238                     MOV    COUNT1,YELLOW 
+018F                 239             H2: 
+018F 7A00            240                     MOV    COUNT,#0 
+0191 1201D6          241                     LCALL  BCD_HEX 
+0194                 242             LB2:  
+0194 120234          243                     LCALL   PAUSING
+0197 1201EB          244                     LCALL   SHOW_LED
+019A BA14F7          245                     CJNE    COUNT,#20,LB2 
+019D 1B              246                     DEC     COUNT1 
+019E 1C              247                     DEC     COUNT2 
+019F BBFFED          248                     CJNE    COUNT1,#-1,H2 
+                     249      
+01A2 759021          250                     MOV    LIGHT,#00100001B  ; sang dèn do 1, xanh 2 
+01A5 AB18            251                     MOV    COUNT1,RED 
+01A7 AC16            252                     MOV    COUNT2,GREEN 
+01A9                 253             H3:
+                     254                     ;JB        P3.4, PAUSING
+01A9 7A00            255                     MOV    COUNT,#0 
+A51 MACRO ASSEMBLER  TRAFFIC_LIGHT                                                        06/28/2021 21:26:08 PAGE     5
+
+01AB 1201D6          256                     LCALL  BCD_HEX 
+01AE                 257             LB3: 
+01AE 120234          258                     LCALL   PAUSING
+01B1 1201EB          259                     LCALL   SHOW_LED 
+01B4 BA14F7          260                     CJNE    COUNT,#20,LB3 
+01B7 1B              261                     DEC     COUNT1 
+01B8 1C              262                     DEC     COUNT2 
+01B9 BC00ED          263                     CJNE    COUNT2,#0,H3 
+                     264      
+01BC 759011          265                     MOV    LIGHT,#00010001B  ; sang dèn do 1, vang 2 
+01BF AC17            266                     MOV    COUNT2,YELLOW 
+01C1                 267             H4:  
+                     268                     ;JB        P3.4, PAUSING
+01C1 7A00            269                     MOV    COUNT,#0 
+01C3 1201D6          270                     LCALL  BCD_HEX 
+01C6                 271             LB4:  
+01C6 120234          272                     LCALL   PAUSING
+01C9 1201EB          273                     LCALL   SHOW_LED
+01CC BA14F7          274                     CJNE    COUNT,#20,LB4 
+01CF 1B              275                     DEC     COUNT1 
+01D0 1C              276                     DEC     COUNT2 
+01D1 BCFFED          277                     CJNE    COUNT2,#-1,H4 
+01D4 808C            278                     JMP     START_LIGHT 
+                     279      
+01D6                 280             BCD_HEX: 
+01D6 EB              281                     MOV    A,COUNT1 
+01D7 75F00A          282                     MOV    B,#10 
+01DA 84              283                     DIV    AB 
+01DB F512            284                     MOV    12H,A 
+01DD 85F013          285                     MOV    13H,B 
+01E0 EC              286                     MOV    A,COUNT2 
+01E1 75F00A          287                     MOV    B,#10 
+01E4 84              288                     DIV    AB 
+01E5 F514            289                     MOV    14H,A 
+01E7 85F015          290                     MOV    15H,B 
+01EA 22              291                     RET 
+01EB                 292             SHOW_LED: 
+01EB 900244          293                     MOV    DPTR,#MA7DOAN 
+01EE E512            294                     MOV    A,12H 
+01F0 93              295                     MOVC   A,@A+DPTR 
+01F1 F5A0            296                     MOV    LED,A 
+01F3 D2B1            297                     SETB   P3.1
+01F5 D2B2            298                     SETB   P3.2
+01F7 D2B3            299                     SETB   P3.3
+01F9 C2B0            300                     CLR        P3.0
+01FB 12022F          301                     LCALL  DELAY1
+01FE D2B0            302                     SETB   P3.0 
+                     303      
+0200 E513            304                     MOV    A,13H 
+0202 93              305                     MOVC   A,@A+DPTR 
+0203 F5A0            306                     MOV    LED,A 
+0205 C2B1            307                     CLR    P3.1
+0207 12022F          308                     LCALL  DELAY1 
+020A D2B1            309                     SETB   P3.1     
+                     310      
+020C E514            311                     MOV    A,14H 
+020E 93              312                     MOVC   A,@A+DPTR 
+020F F5A0            313                     MOV    LED,A 
+0211 C2B2            314                     CLR    P3.2 
+0213 12022F          315                     LCALL  DELAY1 
+0216 D2B2            316                     SETB   P3.2 
+                     317      
+0218 E515            318                     MOV    A,15H 
+021A 93              319                     MOVC   A,@A+DPTR 
+021B F5A0            320                     MOV    LED,A 
+021D C2B3            321                     CLR    P3.3 
+A51 MACRO ASSEMBLER  TRAFFIC_LIGHT                                                        06/28/2021 21:26:08 PAGE     6
+
+021F 12022F          322                     LCALL  DELAY1 
+0222 D2B3            323                     SETB   P3.3 
+                     324                     
+0224 22              325                     RET
+                     326          
+0225                 327             DELAY:  
+0225 3086FD          328                     JNB P0.6, DELAY
+0228 3085FA          329                     JNB P0.5, DELAY
+022B 3084F7          330                     JNB P0.4, DELAY
+022E 22              331                     RET
+                     332     
+022F                 333             DELAY1:   
+022F 7EC8            334                     MOV    R6,#200
+0231 DEFE            335                     DJNZ   R6,$ 
+0233 22              336                     RET 
+                     337                             
+0234                 338             PAUSING:
+0234 C28C            339                     CLR             TR0
+0236 30B506          340                     JNB             P3.5, SETUP_KEYPAD
+0239 20B4F8          341                     JB              P3.4, PAUSING
+023C D28C            342                     SETB    TR0
+023E 22              343                     RET     
+                     344             
+023F                 345             SETUP_KEYPAD:
+023F 7800            346                     MOV     PRESS, #0
+0241 02001A          347                     LJMP START_KEYPAD
+                     348                     
+0244                 349             MA7DOAN: 
+0244 C0F9A4B0        350                     DB  0C0H,0F9H,0A4H,0B0H,099H,092H,082H,0F8H,080H,090H
+0248 999282F8                
+024C 8090                    
+                     351     END
+A51 MACRO ASSEMBLER  TRAFFIC_LIGHT                                                        06/28/2021 21:26:08 PAGE     7
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+B. . . . . . . . .  D ADDR   00F0H   A   
+BCD_HEX. . . . . .  C ADDR   01D6H   A   
+C1 . . . . . . . .  C ADDR   002CH   A   
+C11. . . . . . . .  C ADDR   0137H   A   
+C2 . . . . . . . .  C ADDR   0048H   A   
+C3 . . . . . . . .  C ADDR   0064H   A   
+C4 . . . . . . . .  C ADDR   0084H   A   
+C5 . . . . . . . .  C ADDR   00A0H   A   
+C6 . . . . . . . .  C ADDR   00BCH   A   
+C7 . . . . . . . .  C ADDR   00DCH   A   
+C8 . . . . . . . .  C ADDR   00F8H   A   
+C9 . . . . . . . .  C ADDR   0114H   A   
+CHECK_START_BUTTON  C ADDR   014DH   A   
+COUNT. . . . . . .    REG    R2          
+COUNT1 . . . . . .    REG    R3          
+COUNT2 . . . . . .    REG    R4          
+D1 . . . . . . . .  C ADDR   0037H   A   
+D11. . . . . . . .  C ADDR   0142H   A   
+D12. . . . . . . .  C ADDR   014AH   A   
+D2 . . . . . . . .  C ADDR   0053H   A   
+D3 . . . . . . . .  C ADDR   006FH   A   
+D4 . . . . . . . .  C ADDR   008FH   A   
+D5 . . . . . . . .  C ADDR   00ABH   A   
+D6 . . . . . . . .  C ADDR   00C7H   A   
+D7 . . . . . . . .  C ADDR   00E7H   A   
+D8 . . . . . . . .  C ADDR   0103H   A   
+D9 . . . . . . . .  C ADDR   011FH   A   
+DELAY. . . . . . .  C ADDR   0225H   A   
+DELAY1 . . . . . .  C ADDR   022FH   A   
+GREEN. . . . . . .  N NUMB   0016H   A   
+H1 . . . . . . . .  C ADDR   0177H   A   
+H2 . . . . . . . .  C ADDR   018FH   A   
+H3 . . . . . . . .  C ADDR   01A9H   A   
+H4 . . . . . . . .  C ADDR   01C1H   A   
+IE . . . . . . . .  D ADDR   00A8H   A   
+LB1. . . . . . . .  C ADDR   017CH   A   
+LB2. . . . . . . .  C ADDR   0194H   A   
+LB3. . . . . . . .  C ADDR   01AEH   A   
+LB4. . . . . . . .  C ADDR   01C6H   A   
+LED. . . . . . . .  D ADDR   00A0H   A   
+LIGHT. . . . . . .  D ADDR   0090H   A   
+MA7DOAN. . . . . .  C ADDR   0244H   A   
+MAIN . . . . . . .  C ADDR   0013H   A   
+NEXT1. . . . . . .  C ADDR   003AH   A   
+NEXT10 . . . . . .  C ADDR   0129H   A   
+NEXT11 . . . . . .  C ADDR   0145H   A   
+NEXT2. . . . . . .  C ADDR   0056H   A   
+NEXT3. . . . . . .  C ADDR   0072H   A   
+NEXT4. . . . . . .  C ADDR   0092H   A   
+NEXT5. . . . . . .  C ADDR   00AEH   A   
+NEXT6. . . . . . .  C ADDR   00CAH   A   
+NEXT7. . . . . . .  C ADDR   00EAH   A   
+NEXT8. . . . . . .  C ADDR   0106H   A   
+NEXT9. . . . . . .  C ADDR   0122H   A   
+P0 . . . . . . . .  D ADDR   0080H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+P2 . . . . . . . .  D ADDR   00A0H   A   
+P3 . . . . . . . .  D ADDR   00B0H   A   
+PAUSING. . . . . .  C ADDR   0234H   A   
+PRESS. . . . . . .    REG    R0          
+A51 MACRO ASSEMBLER  TRAFFIC_LIGHT                                                        06/28/2021 21:26:08 PAGE     8
+
+RED. . . . . . . .  N NUMB   0018H   A   
+SAVE . . . . . . .    REG    R1          
+SCAN . . . . . . .  D ADDR   00B0H   A   
+SETUP_KEYPAD . . .  C ADDR   023FH   A   
+SETUP_LIGHT. . . .  C ADDR   0152H   A   
+SHOW_LED . . . . .  C ADDR   01EBH   A   
+START_KEYPAD . . .  C ADDR   001AH   A   
+START_LIGHT. . . .  C ADDR   0162H   A   
+TF0. . . . . . . .  B ADDR   0088H.5 A   
+TH0. . . . . . . .  D ADDR   008CH   A   
+TL0. . . . . . . .  D ADDR   008AH   A   
+TMOD . . . . . . .  D ADDR   0089H   A   
+TR0. . . . . . . .  B ADDR   0088H.4 A   
+YELLOW . . . . . .  N NUMB   0017H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

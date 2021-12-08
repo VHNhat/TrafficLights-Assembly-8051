@@ -1,0 +1,193 @@
+A51 MACRO ASSEMBLER  DEMO                                                                 06/04/2021 18:22:43 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\demo.obj
+ASSEMBLER INVOKED BY: D:\KEILC V5 Full ARM   8051\8051\C51\BIN\A51.EXE demo.a51 SET(SMALL) DEBUG PRINT(.\Listings\demo.l
+                      st) OBJECT(.\Objects\demo.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+  REG                  1     DEM        EQU     R2 
+  REG                  2     DEM1   EQU     R3 
+  REG                  3     DEM2   EQU     R4 
+  0016                 4     XANH   EQU     16H 
+  0017                 5     VANG   EQU     17H 
+  0018                 6     DO     EQU     18H 
+  0090                 7     DEN    EQU     P1 
+  00A0                 8     L7DOAN  EQU    P2 
+  00B0                 9     QUET   EQU    P3 
+                      10      
+0000                  11     ORG     0 
+0000 8011             12     JMP     MAIN 
+                      13      
+                      14     ; ng?t Timer0 v?i th?i gian 50.000 us = 50ms 
+000B                  15     ORG     0BH 
+000B 758C3C           16     MOV    TH0,#HIGH(-50000) 
+000E 758AB0           17     MOV    TL0,#LOW(-50000) 
+0011 0A               18     INC    DEM    ; khi bi?n d?m lO 20 s? cho LED  
+0012 32               19     RETI        ;7 do?n hi?n th?, 20*50000=1 gioy 
+0013                  20     MAIN:   
+0013 758901           21     MOV    TMOD,#01 
+0016 758C3C           22     MOV    TH0,#HIGH(-50000) 
+0019 758AB0           23     MOV    TL0,#LOW(-50000) 
+001C C28D             24     CLR     TF0 
+001E D28C             25     SETB    TR0 
+0020 75A882           26     MOV    IE,#82H 
+0023                  27     BATDAU:   
+0023 759024           28     MOV    DEN,#00100100B  ; sang dèn xanh 1, do 2 
+0026 751611           29     MOV    XANH,#17 
+0029 751703           30     MOV    VANG,#3 
+002C 751814           31     MOV    DO,#20 
+002F AB16             32     MOV    DEM1,XANH 
+0031 AC18             33     MOV    DEM2,DO 
+0033                  34     H1:   
+0033 7A00             35     MOV    DEM,#0 
+0035 120086           36     LCALL   BCD_HEX 
+0038                  37     LB1:   
+0038 12009B           38     LCALL   HIEN_THI 
+003B BA14FA           39     CJNE    DEM,#20,LB1 
+003E 1B               40     DEC     DEM1 
+003F 1C               41     DEC     DEM2 
+0040 BB00F0           42     CJNE    DEM1,#0,H1 
+                      43      
+0043 759022           44     MOV    DEN,#00100010B  ; sang dèn vang 1, do 2  
+0046 AB17             45     MOV    DEM1,VANG 
+0048                  46     H2:   
+0048 7A00             47     MOV    DEM,#0 
+004A 120086           48     LCALL   BCD_HEX 
+004D                  49     LB2:   
+004D 12009B           50     LCALL   HIEN_THI 
+0050 BA14FA           51     CJNE    DEM,#20,LB2 
+0053 1B               52     DEC     DEM1 
+0054 1C               53     DEC     DEM2 
+0055 BBFFF0           54     CJNE    DEM1,#-1,H2 
+                      55      
+0058 759009           56     MOV    DEN,#00001001B  ; sang dèn do 1, xanh 2 
+005B AB18             57     MOV    DEM1,DO 
+A51 MACRO ASSEMBLER  DEMO                                                                 06/04/2021 18:22:43 PAGE     2
+
+005D AC16             58     MOV    DEM2,XANH 
+005F                  59     H3:   
+005F 7A00             60     MOV    DEM,#0 
+0061 120086           61     LCALL   BCD_HEX 
+0064                  62     LB3:   
+0064 12009B           63     LCALL   HIEN_THI 
+0067 BA14FA           64     CJNE    DEM,#20,LB3 
+006A 1B               65     DEC     DEM1 
+006B 1C               66     DEC     DEM2 
+006C BC00F0           67     CJNE    DEM2,#0,H3 
+                      68      
+006F 75900A           69     MOV    DEN,#00001010B  ; sang dèn do 1, vang 2 
+0072 AC17             70     MOV    DEM2,VANG 
+0074                  71     H4:   
+0074 7A00             72     MOV    DEM,#0 
+0076 120086           73     LCALL   BCD_HEX 
+0079                  74     LB4:   
+0079 12009B           75     LCALL   HIEN_THI 
+007C BA14FA           76     CJNE    DEM,#20,LB4 
+007F 1B               77     DEC     DEM1 
+0080 1C               78     DEC     DEM2 
+0081 BCFFF0           79     CJNE    DEM2,#-1,H4 
+0084 809D             80     JMP     BATDAU 
+                      81      
+0086                  82     BCD_HEX: 
+0086 EB               83     MOV    A,DEM1 
+0087 75F00A           84     MOV    B,#10 
+008A 84               85     DIV     AB 
+008B F512             86     MOV    12H,A 
+008D 85F013           87     MOV    13H,B 
+0090 EC               88     MOV    A,DEM2 
+0091 75F00A           89     MOV    B,#10 
+0094 84               90     DIV     AB 
+0095 F514             91     MOV    14H,A 
+0097 85F015           92     MOV    15H,B 
+009A 22               93     RET 
+009B                  94     HIEN_THI: 
+009B 9000DB           95     MOV    DPTR,#MA7DOAN 
+009E E512             96     MOV    A,12H 
+00A0 93               97     MOVC   A,@A+DPTR 
+00A1 F5A0             98     MOV    L7DOAN,A 
+00A3 75B0FE           99     MOV    QUET,#0FEH 
+00A6 1200D6          100     LCALL   DELAY 
+00A9 75B0FF          101     MOV    QUET,#0FFH 
+                     102      
+00AC E513            103     MOV    A,13H 
+00AE 93              104     MOVC   A,@A+DPTR 
+00AF F5A0            105     MOV    L7DOAN,A 
+00B1 75B0FD          106     MOV    QUET,#0FDH 
+00B4 1200D6          107     LCALL   DELAY 
+00B7 75B0FF          108     MOV    QUET,#0FFH 
+                     109      
+00BA E514            110     MOV    A,14H 
+00BC 93              111     MOVC   A,@A+DPTR 
+00BD F5A0            112     MOV    L7DOAN,A 
+00BF 75B0FB          113     MOV    QUET,#0FBH 
+00C2 1200D6          114     LCALL   DELAY 
+00C5 75B0FF          115     MOV    QUET,#0FFH 
+                     116      
+00C8 E515            117     MOV    A,15H 
+00CA 93              118     MOVC   A,@A+DPTR 
+00CB F5A0            119     MOV    L7DOAN,A 
+00CD 75B0F7          120     MOV    QUET,#0F7H 
+00D0 1200D6          121     LCALL   DELAY 
+00D3 75B0FF          122     MOV    QUET,#0FFH 
+                     123          
+A51 MACRO ASSEMBLER  DEMO                                                                 06/04/2021 18:22:43 PAGE     3
+
+00D6                 124     DELAY:   
+00D6 7E96            125     MOV    R6,#150 
+00D8 DEFE            126     DJNZ    R6,$ 
+00DA 22              127     RET 
+00DB                 128     MA7DOAN: 
+00DB C0F9A4B0        129     DB  0C0H,0F9H,0A4H,0B0H,099H,092H,082H,0F8H,080H,090H
+00DF 999282F8                
+00E3 8090                    
+                     130     END
+A51 MACRO ASSEMBLER  DEMO                                                                 06/04/2021 18:22:43 PAGE     4
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+B. . . . . . . . .  D ADDR   00F0H   A   
+BATDAU . . . . . .  C ADDR   0023H   A   
+BCD_HEX. . . . . .  C ADDR   0086H   A   
+DELAY. . . . . . .  C ADDR   00D6H   A   
+DEM. . . . . . . .    REG    R2          
+DEM1 . . . . . . .    REG    R3          
+DEM2 . . . . . . .    REG    R4          
+DEN. . . . . . . .  D ADDR   0090H   A   
+DO . . . . . . . .  N NUMB   0018H   A   
+H1 . . . . . . . .  C ADDR   0033H   A   
+H2 . . . . . . . .  C ADDR   0048H   A   
+H3 . . . . . . . .  C ADDR   005FH   A   
+H4 . . . . . . . .  C ADDR   0074H   A   
+HIEN_THI . . . . .  C ADDR   009BH   A   
+IE . . . . . . . .  D ADDR   00A8H   A   
+L7DOAN . . . . . .  D ADDR   00A0H   A   
+LB1. . . . . . . .  C ADDR   0038H   A   
+LB2. . . . . . . .  C ADDR   004DH   A   
+LB3. . . . . . . .  C ADDR   0064H   A   
+LB4. . . . . . . .  C ADDR   0079H   A   
+MA7DOAN. . . . . .  C ADDR   00DBH   A   
+MAIN . . . . . . .  C ADDR   0013H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+P2 . . . . . . . .  D ADDR   00A0H   A   
+P3 . . . . . . . .  D ADDR   00B0H   A   
+QUET . . . . . . .  D ADDR   00B0H   A   
+TF0. . . . . . . .  B ADDR   0088H.5 A   
+TH0. . . . . . . .  D ADDR   008CH   A   
+TL0. . . . . . . .  D ADDR   008AH   A   
+TMOD . . . . . . .  D ADDR   0089H   A   
+TR0. . . . . . . .  B ADDR   0088H.4 A   
+VANG . . . . . . .  N NUMB   0017H   A   
+XANH . . . . . . .  N NUMB   0016H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

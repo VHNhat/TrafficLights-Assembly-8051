@@ -1,0 +1,130 @@
+DEM	   EQU     R2 
+DEM1   EQU     R3 
+DEM2   EQU     R4 
+XANH   EQU     16H 
+VANG   EQU     17H 
+DO     EQU     18H 
+DEN    EQU     P1 
+L7DOAN  EQU    P2 
+QUET   EQU    P3 
+ 
+ORG     0 
+JMP     MAIN 
+ 
+; ng?t Timer0 v?i th?i gian 50.000 us = 50ms 
+ORG     0BH 
+MOV    TH0,#HIGH(-50000) 
+MOV    TL0,#LOW(-50000) 
+INC    DEM    ; khi bi?n d?m lO 20 s? cho LED  
+RETI        ;7 do?n hi?n th?, 20*50000=1 gioy 
+MAIN:   
+MOV    TMOD,#01 
+MOV    TH0,#HIGH(-50000) 
+MOV    TL0,#LOW(-50000) 
+CLR     TF0 
+SETB    TR0 
+MOV    IE,#82H 
+BATDAU:   
+MOV    DEN,#00100100B  ; sang dèn xanh 1, do 2 
+MOV    XANH,#17 
+MOV    VANG,#3 
+MOV    DO,#20 
+MOV    DEM1,XANH 
+MOV    DEM2,DO 
+H1:   
+MOV    DEM,#0 
+LCALL   BCD_HEX 
+LB1:   
+LCALL   HIEN_THI 
+CJNE    DEM,#20,LB1 
+DEC     DEM1 
+DEC     DEM2 
+CJNE    DEM1,#0,H1 
+ 
+MOV    DEN,#00100010B  ; sang dèn vang 1, do 2  
+MOV    DEM1,VANG 
+H2:   
+MOV    DEM,#0 
+LCALL   BCD_HEX 
+LB2:   
+LCALL   HIEN_THI 
+CJNE    DEM,#20,LB2 
+DEC     DEM1 
+DEC     DEM2 
+CJNE    DEM1,#-1,H2 
+ 
+MOV    DEN,#00001001B  ; sang dèn do 1, xanh 2 
+MOV    DEM1,DO 
+MOV    DEM2,XANH 
+H3:   
+MOV    DEM,#0 
+LCALL   BCD_HEX 
+LB3:   
+LCALL   HIEN_THI 
+CJNE    DEM,#20,LB3 
+DEC     DEM1 
+DEC     DEM2 
+CJNE    DEM2,#0,H3 
+ 
+MOV    DEN,#00001010B  ; sang dèn do 1, vang 2 
+MOV    DEM2,VANG 
+H4:   
+MOV    DEM,#0 
+LCALL   BCD_HEX 
+LB4:   
+LCALL   HIEN_THI 
+CJNE    DEM,#20,LB4 
+DEC     DEM1 
+DEC     DEM2 
+CJNE    DEM2,#-1,H4 
+JMP     BATDAU 
+ 
+BCD_HEX: 
+MOV    A,DEM1 
+MOV    B,#10 
+DIV     AB 
+MOV    12H,A 
+MOV    13H,B 
+MOV    A,DEM2 
+MOV    B,#10 
+DIV     AB 
+MOV    14H,A 
+MOV    15H,B 
+RET 
+HIEN_THI: 
+MOV    DPTR,#MA7DOAN 
+MOV    A,12H 
+MOVC   A,@A+DPTR 
+MOV    L7DOAN,A 
+MOV    QUET,#0FEH 
+LCALL   DELAY 
+MOV    QUET,#0FFH 
+ 
+MOV    A,13H 
+MOVC   A,@A+DPTR 
+MOV    L7DOAN,A 
+MOV    QUET,#0FDH 
+LCALL   DELAY 
+MOV    QUET,#0FFH 
+ 
+MOV    A,14H 
+MOVC   A,@A+DPTR 
+MOV    L7DOAN,A 
+MOV    QUET,#0FBH 
+LCALL   DELAY 
+MOV    QUET,#0FFH 
+ 
+MOV    A,15H 
+MOVC   A,@A+DPTR 
+MOV    L7DOAN,A 
+MOV    QUET,#0F7H 
+LCALL   DELAY 
+MOV    QUET,#0FFH 
+     
+DELAY:   
+MOV    R6,#150 
+DJNZ    R6,$ 
+RET 
+MA7DOAN: 
+DB  0C0H,0F9H,0A4H,0B0H,099H,092H,082H,0F8H,080H,090H
+END
